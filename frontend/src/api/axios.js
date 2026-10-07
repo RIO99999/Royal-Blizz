@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 // Single Axios instance pointing at the backend API.
+//
+// This is the authoritative setting on Vercel: a VITE_API_URL env var there
+// would be inlined at build time and would override the value below.
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
 });
