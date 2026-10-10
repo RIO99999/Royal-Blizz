@@ -4,37 +4,36 @@ import api from '../api/axios';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import PhoneField from '../components/PhoneField';
-import { validateName, validatePhone, NAME_HINT, PHONE_HINT } from '../utils/validation';
+import { validateName, validatePhone, validateEmail, NAME_HINT, PHONE_HINT, EMAIL_HINT } from '../utils/validation';
+import { useForm } from '../utils/useForm';
 import { naira } from '../utils/format';
+
+const validate = (values) => ({
+  ...(!validateName(values.name) ? { name: NAME_HINT } : {}),
+  ...(!validateEmail(values.email) ? { email: EMAIL_HINT } : {}),
+  ...(!validatePhone(values.phone) ? { phone: PHONE_HINT } : {}),
+  ...(!values.address.trim() ? { address: 'Enter your delivery address' } : {}),
+});
 
 export default function Checkout() {
   const { cart, subtotal, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
+  const { values: form, handleChange, handleBlur, errorFor, markAllTouched, hasErrors, setField } = useForm({
     name: user?.fullName || '',
     email: user?.email || '',
     phone: user?.phone || '',
     address: user?.address || '',
-  });
+  }, validate);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handlePay = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (!validateName(form.name)) {
-      setError(NAME_HINT);
-      return;
-    }
-    if (!validatePhone(form.phone)) {
-      setError(PHONE_HINT);
-      return;
-    }
+    markAllTouched();
+    if (hasErrors) return;
 
     setLoading(true);
     try {
@@ -74,25 +73,30 @@ export default function Checkout() {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="checkout-layout">
-        <form className="card checkout-form" onSubmit={handlePay}>
+        <form className="card checkout-form" onSubmit={handlePay} noValidate>
           <h3>Shipping Details</h3>
           <label className="field">
             <span>Full name</span>
-            <input type="text" name="name" className="input" required value={form.name} onChange={handleChange} />
+            <input type="text" name="name" className={`input ${errorFor('name') ? 'input-error' : ''}`} required value={form.name} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('name') && <small className="field-error">{errorFor('name')}</small>}
           </label>
           <label className="field">
             <span>Email</span>
-            <input type="email" name="email" className="input" required value={form.email} onChange={handleChange} />
+            <input type="email" name="email" className={`input ${errorFor('email') ? 'input-error' : ''}`} required value={form.email} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('email') && <small className="field-error">{errorFor('email')}</small>}
           </label>
           <PhoneField
             label="Phone (with country code)"
             value={form.phone}
-            onChange={(phone) => setForm({ ...form, phone })}
+            onChange={(phone) => setField('phone', phone)}
+            onBlur={handleBlur}
+            error={errorFor('phone')}
             required
           />
           <label className="field">
             <span>Address</span>
-            <textarea name="address" className="input" rows="3" required value={form.address} onChange={handleChange} />
+            <textarea name="address" className={`input ${errorFor('address') ? 'input-error' : ''}`} rows="3" required value={form.address} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('address') && <small className="field-error">{errorFor('address')}</small>}
           </label>
 
           <button className="btn btn-orange btn-block" disabled={loading}>

@@ -3,40 +3,35 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaShoppingBag, FaStore } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import AuthLayout from '../components/AuthLayout';
-import { validateName, validatePassword, NAME_HINT, PASSWORD_HINT } from '../utils/validation';
+import { validateName, validatePassword, validateEmail, NAME_HINT, PASSWORD_HINT, EMAIL_HINT } from '../utils/validation';
+import { useForm } from '../utils/useForm';
+
+const validate = (values) => ({
+  ...(!validateName(values.fullName) ? { fullName: NAME_HINT } : {}),
+  ...(!validateEmail(values.email) ? { email: EMAIL_HINT } : {}),
+  ...(!validatePassword(values.password) ? { password: PASSWORD_HINT } : {}),
+  ...(values.confirmPassword !== values.password ? { confirmPassword: 'Passwords do not match' } : {}),
+});
 
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
+  const { values: form, handleChange, handleBlur, errorFor, markAllTouched, hasErrors, setField } = useForm({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
     role: 'buyer',
-  });
+  }, validate);
   const [profilePicture, setProfilePicture] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (!validateName(form.fullName)) {
-      setError(NAME_HINT);
-      return;
-    }
-    if (!validatePassword(form.password)) {
-      setError(PASSWORD_HINT);
-      return;
-    }
-    if (form.password !== form.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    markAllTouched();
+    if (hasErrors) return;
 
     setLoading(true);
     try {
@@ -71,14 +66,14 @@ export default function Register() {
 
         {error && <div className="alert alert-danger">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="field">
             <span>Account type</span>
             <div className="role-picker">
               <button
                 type="button"
                 className={form.role === 'buyer' ? 'role-option active' : 'role-option'}
-                onClick={() => setForm({ ...form, role: 'buyer' })}
+                onClick={() => setField('role', 'buyer')}
               >
                 <FaShoppingBag className="role-icon" />
                 <strong>Buyer</strong>
@@ -87,7 +82,7 @@ export default function Register() {
               <button
                 type="button"
                 className={form.role === 'vendor' ? 'role-option active' : 'role-option'}
-                onClick={() => setForm({ ...form, role: 'vendor' })}
+                onClick={() => setField('role', 'vendor')}
               >
                 <FaStore className="role-icon" />
                 <strong>Vendor</strong>
@@ -98,21 +93,25 @@ export default function Register() {
 
           <label className="field">
             <span>Full name</span>
-            <input type="text" name="fullName" className="input" required value={form.fullName} onChange={handleChange} />
+            <input type="text" name="fullName" className={`input ${errorFor('fullName') ? 'input-error' : ''}`} required value={form.fullName} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('fullName') && <small className="field-error">{errorFor('fullName')}</small>}
           </label>
           <label className="field">
             <span>Email</span>
-            <input type="email" name="email" className="input" required value={form.email} onChange={handleChange} />
+            <input type="email" name="email" className={`input ${errorFor('email') ? 'input-error' : ''}`} required value={form.email} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('email') && <small className="field-error">{errorFor('email')}</small>}
           </label>
           <div className="form-row">
             <label className="field">
               <span>Password</span>
-              <input type="password" name="password" className="input" required value={form.password} onChange={handleChange} />
+              <input type="password" name="password" className={`input ${errorFor('password') ? 'input-error' : ''}`} required value={form.password} onChange={handleChange} onBlur={handleBlur} />
+              {errorFor('password') && <small className="field-error">{errorFor('password')}</small>}
               <small className="muted">Min 8 chars with uppercase, lowercase, number &amp; special character.</small>
             </label>
             <label className="field">
               <span>Confirm password</span>
-              <input type="password" name="confirmPassword" className="input" required value={form.confirmPassword} onChange={handleChange} />
+              <input type="password" name="confirmPassword" className={`input ${errorFor('confirmPassword') ? 'input-error' : ''}`} required value={form.confirmPassword} onChange={handleChange} onBlur={handleBlur} />
+              {errorFor('confirmPassword') && <small className="field-error">{errorFor('confirmPassword')}</small>}
             </label>
           </div>
           <label className="field">

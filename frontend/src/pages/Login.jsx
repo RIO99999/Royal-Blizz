@@ -2,19 +2,27 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AuthLayout from '../components/AuthLayout';
+import { useForm } from '../utils/useForm';
+import { validateEmail, EMAIL_HINT } from '../utils/validation';
+
+const validate = (values) => ({
+  ...(!validateEmail(values.email) ? { email: EMAIL_HINT } : {}),
+  ...(!values.password.trim() ? { password: 'Enter your password' } : {}),
+});
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const { values: form, handleChange, handleBlur, errorFor, markAllTouched, hasErrors } =
+    useForm({ email: '', password: '' }, validate);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    markAllTouched();
+    if (hasErrors) return;
     setError('');
     setLoading(true);
     try {
@@ -42,14 +50,16 @@ export default function Login() {
 
         {error && <div className="alert alert-danger">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <label className="field">
             <span>Email</span>
-            <input type="email" name="email" className="input" required value={form.email} onChange={handleChange} />
+            <input type="email" name="email" className={`input ${errorFor('email') ? 'input-error' : ''}`} required value={form.email} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('email') && <small className="field-error">{errorFor('email')}</small>}
           </label>
           <label className="field">
             <span>Password</span>
-            <input type="password" name="password" className="input" required value={form.password} onChange={handleChange} />
+            <input type="password" name="password" className={`input ${errorFor('password') ? 'input-error' : ''}`} required value={form.password} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('password') && <small className="field-error">{errorFor('password')}</small>}
           </label>
           <div className="row-between">
             <span />

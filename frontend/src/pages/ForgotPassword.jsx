@@ -2,15 +2,23 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import AuthLayout from '../components/AuthLayout';
+import { useForm } from '../utils/useForm';
+import { validateEmail, EMAIL_HINT } from '../utils/validation';
+
+const validate = ({ email }) => (validateEmail(email) ? {} : { email: EMAIL_HINT });
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
+  const { values, handleChange, handleBlur, errorFor, markAllTouched, hasErrors } =
+    useForm({ email: '' }, validate);
+  const { email } = values;
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    markAllTouched();
+    if (hasErrors) return;
     setError('');
     setMessage('');
     setLoading(true);
@@ -37,10 +45,11 @@ export default function ForgotPassword() {
         {error && <div className="alert alert-danger">{error}</div>}
         {message && <div className="alert alert-success">{message}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <label className="field">
             <span>Email</span>
-            <input type="email" className="input" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="email" name="email" className={`input ${errorFor('email') ? 'input-error' : ''}`} required value={email} onChange={handleChange} onBlur={handleBlur} />
+            {errorFor('email') && <small className="field-error">{errorFor('email')}</small>}
           </label>
           <button className="btn btn-orange btn-block" disabled={loading}>
             {loading ? 'Sending...' : 'Send reset link'}

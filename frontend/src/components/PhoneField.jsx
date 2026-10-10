@@ -27,7 +27,7 @@ const splitPhone = (value) => {
 };
 
 // A phone input that always produces an international number ("+<country><digits>").
-export default function PhoneField({ label = 'Phone', value = '', onChange, required = false }) {
+export default function PhoneField({ label = 'Phone', value = '', onChange, required = false, error = '', onBlur }) {
   const [state, setState] = useState(() => splitPhone(value));
 
   useEffect(() => {
@@ -63,13 +63,16 @@ export default function PhoneField({ label = 'Phone', value = '', onChange, requ
         </select>
         <input
           type="tel"
-          className="input"
+          name="phone"
+          className={`input ${error ? 'input-error' : ''}`}
           placeholder="8012345678"
           value={state.number}
           onChange={handleNumber}
+          onBlur={onBlur}
           required={required}
         />
       </div>
+      {error && <small className="field-error">{error}</small>}
     </label>
   );
 }

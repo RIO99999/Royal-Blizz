@@ -260,6 +260,38 @@ button {
   background: var(--navy);
 }
 
+/* Mobile icon navigation in the top bar (no hamburger) — hidden on desktop */
+.nav-icons {
+  display: none;
+}
+
+.nav-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 8px;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.62rem;
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav-icon svg {
+  font-size: 1.35rem;
+}
+
+.nav-icon.active {
+  color: var(--orange);
+}
+
+.nav-icon .cart-badge {
+  top: 0;
+  right: 0;
+}
+
 /* ---------- Hero ---------- */
 .hero {
   background: linear-gradient(120deg, var(--navy) 0%, var(--blue) 100%);
@@ -375,6 +407,7 @@ button {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
@@ -406,18 +439,21 @@ button {
   flex-direction: column;
   gap: 6px;
   flex: 1;
+  min-width: 0;
 }
 
 .product-card-title {
   font-weight: 700;
   color: var(--navy);
   min-height: 42px;
+  overflow-wrap: anywhere;
 }
 
 .product-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   margin-top: auto;
 }
 
@@ -425,6 +461,7 @@ button {
   font-weight: 800;
   color: var(--navy);
   font-size: 1.05rem;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- Badges / misc ---------- */
@@ -546,6 +583,17 @@ button {
 .field span {
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.input-error {
+  border-color: var(--danger) !important;
 }
 
 .phone-field {
@@ -971,11 +1019,19 @@ button {
 }
 
 .dash-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 11px 14px;
   border-radius: 10px;
   color: rgba(255, 255, 255, 0.8);
   font-weight: 600;
   font-size: 0.95rem;
+}
+
+.dash-link svg {
+  font-size: 1.05rem;
+  flex-shrink: 0;
 }
 
 .dash-link:hover {
@@ -989,8 +1045,21 @@ button {
 
 .dash-logout {
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
   color: #fff;
   border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile icon navigation (top bar) — hidden on desktop */
+.dash-mobilenav {
+  display: none;
+}
+
+.dash-logout-mobile {
+  display: none;
 }
 
 .dash-main {
@@ -1625,6 +1694,20 @@ button {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .product-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .product-card-footer .btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 10px;
+    white-space: normal;
+    line-height: 1.25;
+  }
+
   .category-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1647,25 +1730,19 @@ button {
   }
 
   .nav-links {
-    position: absolute;
-    top: 68px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    background: var(--white);
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
     display: none;
   }
 
-  .nav-links.open {
-    display: flex;
+  .hamburger {
+    display: none;
   }
 
-  .hamburger {
+  /* Top bar with icons on phones — no hamburger needed */
+  .nav-icons {
     display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
   }
 
   .hero-inner {
@@ -1676,9 +1753,26 @@ button {
     font-size: 2.2rem;
   }
 
+  /* Products: two columns on tablets, and cards stack their footer so the
+     price and button never squeeze together */
   .product-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
+  }
+
+  .product-card-title {
+    min-height: 0;
+    font-size: 0.92rem;
+  }
+
+  .product-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .product-card-footer .btn {
+    width: 100%;
   }
 
   .category-grid {
@@ -1717,16 +1811,63 @@ button {
   }
 
   .dash-sidebar {
-    position: fixed;
-    left: -260px;
-    top: 0;
-    bottom: 0;
-    z-index: 60;
-    transition: left 0.25s ease;
+    display: none;
   }
 
-  .dash-sidebar.open {
-    left: 0;
+  .dash-topbar {
+    height: 60px;
+    padding: 0 16px;
+  }
+
+  .dash-logout-mobile {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  /* Mobile top navigation bar with icons */
+  .dash-mobilenav {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 8px;
+    overflow-x: auto;
+    position: sticky;
+    top: 60px;
+    z-index: 39;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dash-mobilenav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dash-mobile-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.68rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .dash-mobile-link svg {
+    font-size: 1.25rem;
+  }
+
+  .dash-mobile-link.active {
+    color: var(--orange);
+    background: #fff3e6;
+  }
+
+  .dash-user-info {
+    display: none;
   }
 
   .dash-content {
@@ -1744,7 +1885,7 @@ button {
 
 @media (max-width: 480px) {
   .product-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .stat-grid {

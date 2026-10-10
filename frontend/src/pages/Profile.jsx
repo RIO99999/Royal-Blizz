@@ -3,35 +3,33 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import PhoneField from '../components/PhoneField';
 import { validateName, validatePhone, NAME_HINT, PHONE_HINT } from '../utils/validation';
+import { useForm } from '../utils/useForm';
+
+const validate = (values) => ({
+  ...(!validateName(values.fullName) ? { fullName: NAME_HINT } : {}),
+  ...(values.phone && !validatePhone(values.phone) ? { phone: PHONE_HINT } : {}),
+});
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
-  const [form, setForm] = useState({
+  const { values: form, handleChange, handleBlur, errorFor, markAllTouched, hasErrors, setField } = useForm({
     fullName: user?.fullName || '',
     phone: user?.phone || '',
     address: user?.address || '',
     storeName: user?.storeName || '',
     storeDescription: user?.storeDescription || '',
-  });
+  }, validate);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
     setError('');
 
-    if (!validateName(form.fullName)) {
-      setError(NAME_HINT);
-      return;
-    }
-    if (form.phone && !validatePhone(form.phone)) {
-      setError(PHONE_HINT);
-      return;
-    }
+    markAllTouched();
+    if (hasErrors) return;
 
     setLoading(true);
     try {
@@ -52,10 +50,11 @@ export default function Profile() {
       {message && <div className="alert alert-success">{message}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <form className="card form-card" onSubmit={handleSubmit}>
+      <form className="card form-card" onSubmit={handleSubmit} noValidate>
         <label className="field">
           <span>Full name</span>
-          <input type="text" name="fullName" className="input" value={form.fullName} onChange={handleChange} />
+          <input type="text" name="fullName" className={`input ${errorFor('fullName') ? 'input-error' : ''}`} value={form.fullName} onChange={handleChange} onBlur={handleBlur} />
+          {errorFor('fullName') && <small className="field-error">{errorFor('fullName')}</small>}
         </label>
 
         {user?.role === 'vendor' && (
@@ -74,7 +73,9 @@ export default function Profile() {
         <PhoneField
           label="Phone (with country code)"
           value={form.phone}
-          onChange={(phone) => setForm({ ...form, phone })}
+          onChange={(phone) => setField('phone', phone)}
+          onBlur={handleBlur}
+          error={errorFor('phone')}
         />
         <label className="field">
           <span>Address</span>

@@ -9,9 +9,11 @@ export default function Settings() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fileTouched, setFileTouched] = useState(false);
 
   const handleUpload = async (e) => {
     e.preventDefault();
+    setFileTouched(true);
     if (!file) {
       setError('Please choose an image first');
       return;
@@ -50,9 +52,12 @@ export default function Settings() {
               <span>{(user?.fullName || '?').charAt(0).toUpperCase()}</span>
             )}
           </div>
-          <form onSubmit={handleUpload}>
-            <input type="file" accept="image/*" className="input" onChange={(e) => setFile(e.target.files[0])} />
-            <button className="btn btn-orange btn-block" disabled={loading || !file}>
+          <form onSubmit={handleUpload} noValidate>
+            <input type="file" accept="image/*" className={`input ${fileTouched && !file ? 'input-error' : ''}`}
+              onBlur={() => setFileTouched(true)}
+              onChange={(e) => { setFile(e.target.files[0]); setFileTouched(true); }} />
+            {fileTouched && !file && <small className="field-error">Choose a profile picture</small>}
+            <button className="btn btn-orange btn-block" disabled={loading}>
               {loading ? 'Uploading...' : 'Update picture'}
             </button>
           </form>

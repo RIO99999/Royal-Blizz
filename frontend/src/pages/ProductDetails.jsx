@@ -21,6 +21,7 @@ export default function ProductDetails() {
   // Reviews
   const [reviews, setReviews] = useState([]);
   const [reviewRating, setReviewRating] = useState(0);
+  const [ratingTouched, setRatingTouched] = useState(false);
   const [reviewComment, setReviewComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState('');
@@ -72,6 +73,7 @@ export default function ProductDetails() {
   const submitReview = async (e) => {
     e.preventDefault();
     setReviewError('');
+    setRatingTouched(true);
     if (reviewRating < 1) {
       setReviewError('Please choose a star rating');
       return;
@@ -194,13 +196,14 @@ export default function ProductDetails() {
                   key={n}
                   type="button"
                   className={n <= reviewRating ? 'active' : ''}
-                  onClick={() => setReviewRating(n)}
+                  onClick={() => { setReviewRating(n); setRatingTouched(true); setReviewError(''); }}
                   aria-label={`${n} star`}
                 >
                   <FaStar />
                 </button>
               ))}
             </div>
+            {ratingTouched && reviewRating < 1 && <small className="field-error">Choose a star rating</small>}
             <label className="field">
               <span>Your feedback (optional)</span>
               <textarea

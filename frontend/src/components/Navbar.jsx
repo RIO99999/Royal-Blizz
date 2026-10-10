@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { FaHome, FaStore, FaShoppingCart, FaUser, FaSignInAlt } from 'react-icons/fa';
 
 const brandHome = (role) => {
   if (role === 'admin') return '/admin';
@@ -61,6 +62,38 @@ export default function Navbar() {
                 Sign up
               </NavLink>
             </>
+          )}
+        </nav>
+
+        <nav className="nav-icons" aria-label="Quick navigation">
+          <NavLink to="/" className="nav-icon" aria-label="Home" title="Home">
+            <FaHome />
+          </NavLink>
+          <NavLink to="/shop" className="nav-icon" aria-label="Shop" title="Shop">
+            <FaStore />
+          </NavLink>
+          <Link
+            to="/cart"
+            className="nav-icon cart-link"
+            aria-label={`Cart${itemCount > 0 ? `, ${itemCount} items` : ''}`}
+            title="Cart"
+          >
+            <FaShoppingCart />
+            {itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
+          </Link>
+          {user ? (
+            <NavLink
+              to={user.role === 'admin' ? '/admin' : user.role === 'vendor' ? '/vendor' : '/buyer'}
+              className="nav-icon"
+              aria-label="Dashboard"
+              title="Dashboard"
+            >
+              <FaUser />
+            </NavLink>
+          ) : (
+            <NavLink to="/login" className="nav-icon" aria-label="Log in" title="Log in">
+              <FaSignInAlt />
+            </NavLink>
           )}
         </nav>
 
