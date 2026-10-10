@@ -106,7 +106,7 @@ export default function Register() {
               <span>Password</span>
               <input type="password" name="password" className={`input ${errorFor('password') ? 'input-error' : ''}`} required value={form.password} onChange={handleChange} onBlur={handleBlur} />
               {errorFor('password') && <small className="field-error">{errorFor('password')}</small>}
-              <small className="muted">Min 8 chars with uppercase, lowercase, number &amp; special character.</small>
+
             </label>
             <label className="field">
               <span>Confirm password</span>

@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('rb_token') || '');
   const [loading, setLoading] = useState(true);
 
-  // Load the current user from the token (GET /api/auth/me).
+
   useEffect(() => {
     const loadUser = async () => {
       if (!token) {
@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
       }
     };
     loadUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const setAuth = (newToken, newUser) => {
@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
     return res.data.user;
   };
 
-  // register() receives a FormData object (includes profile picture).
+  
   const register = async (formData) => {
     const res = await api.post('/api/auth/register', formData);
     setAuth(res.data.token, res.data.user);

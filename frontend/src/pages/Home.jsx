@@ -56,7 +56,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
+    
       <section className="section">
         <div className="container">
           <h2 className="section-title">Browse Categories</h2>
@@ -74,7 +74,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured products */}
+   
       <section className="section section-alt">
         <div className="container">
           <div className="section-head">
@@ -93,7 +93,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Value props */}
       <section className="section">
         <div className="container value-grid">
           <div className="value-item">
