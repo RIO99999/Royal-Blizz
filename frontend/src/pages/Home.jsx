@@ -56,7 +56,7 @@ export default function Home() {
         </div>
       </section>
 
-    
+
       <section className="section">
         <div className="container">
           <h2 className="section-title">Browse Categories</h2>
@@ -74,7 +74,7 @@ export default function Home() {
         </div>
       </section>
 
-   
+
       <section className="section section-alt">
         <div className="container">
           <div className="section-head">
@@ -101,11 +101,11 @@ export default function Home() {
           </div>
           <div className="value-item">
             <h3>Trusted Vendors</h3>
-            <p>Shop from verified vendors across Nigeria.</p>
+            <p>Shop from vendors across Nigeria.</p>
           </div>
           <div className="value-item">
             <h3>Instant Receipts</h3>
-            <p>Get a professional PDF receipt for every order.</p>
+            <p>Get a PDF receipt for every order.</p>
           </div>
         </div>
       </section>

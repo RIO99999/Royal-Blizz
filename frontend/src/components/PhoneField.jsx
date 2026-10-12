@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-// Common international dial codes (Nigeria first, as this is a Nigerian marketplace).
+
 const COUNTRY_CODES = [
   { code: '+234', label: 'Nigeria' },
   { code: '+1', label: 'USA / Canada' },
@@ -26,7 +26,7 @@ const splitPhone = (value) => {
   return { code: '+234', number: v };
 };
 
-// A phone input that always produces an international number ("+<country><digits>").
+
 export default function PhoneField({ label = 'Phone', value = '', onChange, required = false, error = '', onBlur }) {
   const [state, setState] = useState(() => splitPhone(value));
 
