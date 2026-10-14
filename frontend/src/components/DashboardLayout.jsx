@@ -71,7 +71,7 @@ export default function DashboardLayout({ role }) {
       <aside className="dash-sidebar">
         <Link to="/" className="brand brand-sidebar">
           <span className="brand-name">ROYAL BLIZ</span>
-          <span className="brand-tag">{ROLE_LABEL[role]} panel</span>
+          <span className="brand-tag">{ROLE_LABEL[role]} Dashboard</span>
         </Link>
         <nav className="dash-nav">
           {links.map((l) => {

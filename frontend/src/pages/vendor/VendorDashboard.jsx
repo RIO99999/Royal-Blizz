@@ -98,49 +98,68 @@ export default function VendorDashboard() {
         </div>
       </div>
 
-      <div className="dash-grid-2">
-        <div className="card">
-          <h2>Recent Orders</h2>
-          {recentOrders.length === 0 ? (
-            <p className="muted">No orders yet.</p>
-          ) : (
-            <div className="list">
-              {recentOrders.map((o) => (
-                <div key={o._id} className="list-row">
-                  <div>
-                    <strong>{o.orderNumber}</strong>
-                    <span className="muted">{formatDate(o.createdAt)}</span>
-                  </div>
-                  <div className="list-row-right">
-                    <span>{naira(o.totalAmount)}</span>
-                    <StatusBadge status={o.paymentStatus} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      <section className="dash-section">
+        <h2>Recent Orders</h2>
+        {recentOrders.length === 0 ? (
+          <p className="muted">No orders yet.</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="table dashboard-table">
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Date</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.map((o) => (
+                  <tr key={o._id}>
+                    <td><strong>{o.orderNumber}</strong></td>
+                    <td>{formatDate(o.createdAt)}</td>
+                    <td>{naira(o.totalAmount)}</td>
+                    <td><StatusBadge status={o.paymentStatus} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
-        <div className="card">
-          <h2>Top Products</h2>
-          {topProducts.length === 0 ? (
-            <p className="muted">No products yet.</p>
-          ) : (
-            <div className="list">
-              {topProducts.map((p) => (
-                <div key={p._id} className="list-row">
-                  <img src={p.image} alt={p.name} className="list-thumb" />
-                  <div>
-                    <strong>{p.name}</strong>
-                    <span className="muted"><FaStar style={{ color: 'var(--orange)' }} /> {p.rating.toFixed(1)}</span>
-                  </div>
-                  <span>{naira(p.price)}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+      <section className="dash-section">
+        <h2>Top Products</h2>
+        {topProducts.length === 0 ? (
+          <p className="muted">No products yet.</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="table dashboard-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Rating</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topProducts.map((p) => (
+                  <tr key={p._id}>
+                    <td>
+                      <div className="table-product">
+                        <img src={p.image} alt={p.name} />
+                        <strong>{p.name}</strong>
+                      </div>
+                    </td>
+                    <td><FaStar style={{ color: 'var(--orange)' }} /> {p.rating.toFixed(1)}</td>
+                    <td>{naira(p.price)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <Link to="/vendor/products/new" className="btn btn-orange" style={{ marginTop: 16 }}>
         + Add Product

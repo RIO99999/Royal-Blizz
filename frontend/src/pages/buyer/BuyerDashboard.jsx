@@ -44,7 +44,7 @@ export default function BuyerDashboard() {
 
   return (
     <div>
-      <h1 className="dash-title">Dashboard</h1>
+      <h1 className="dash-title">Buyer Dashboard</h1>
 
       <div className="stat-grid">
         <div className="stat-card card">

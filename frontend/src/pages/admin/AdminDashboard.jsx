@@ -46,41 +46,62 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="dash-grid-2">
-        <div className="card">
-          <h2>Recent Orders</h2>
-          <div className="list">
-            {data.recentOrders.map((o) => (
-              <div key={o._id} className="list-row">
-                <div>
-                  <strong>{o.orderNumber}</strong>
-                  <span className="muted">{o.buyer?.fullName || '—'} · {formatDate(o.createdAt)}</span>
-                </div>
-                <div className="list-row-right">
-                  <span>{naira(o.totalAmount)}</span>
-                  <StatusBadge status={o.paymentStatus} />
-                </div>
-              </div>
-            ))}
-          </div>
+      <section className="dash-section">
+        <h2>Recent Orders</h2>
+        <div className="table-wrap">
+          <table className="table dashboard-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Buyer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Payment</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.recentOrders.map((o) => (
+                <tr key={o._id}>
+                  <td><strong>{o.orderNumber}</strong></td>
+                  <td>{o.buyer?.fullName || '—'}</td>
+                  <td>{formatDate(o.createdAt)}</td>
+                  <td>{naira(o.totalAmount)}</td>
+                  <td><StatusBadge status={o.paymentStatus} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+      </section>
 
-        <div className="card">
-          <h2>Recent Products</h2>
-          <div className="list">
-            {data.recentProducts.map((p) => (
-              <div key={p._id} className="list-row">
-                <img src={p.image} alt={p.name} className="list-thumb" />
-                <div>
-                  <strong>{p.name}</strong>
-                  <span className="muted">{p.vendor?.storeName || p.vendor?.fullName || '—'}</span>
-                </div>
-                <span>{naira(p.price)}</span>
-              </div>
-            ))}
-          </div>
+      <section className="dash-section">
+        <h2>Recent Products</h2>
+        <div className="table-wrap">
+          <table className="table dashboard-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Vendor</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.recentProducts.map((p) => (
+                <tr key={p._id}>
+                  <td>
+                    <div className="table-product">
+                      <img src={p.image} alt={p.name} />
+                      <strong>{p.name}</strong>
+                    </div>
+                  </td>
+                  <td>{p.vendor?.storeName || p.vendor?.fullName || '—'}</td>
+                  <td>{naira(p.price)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
